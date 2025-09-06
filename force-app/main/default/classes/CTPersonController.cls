@@ -34,7 +34,7 @@ public with sharing class CTPersonController {
     
     //search a person  by id
     public static Person__c getPersonId(String personId){
-        List<Person__c> personIdlist = [SELECT id, Name, Mobile__c, 	Token__c, Health_Status__c, Status_Update_Date__c, CurrencyIsoCode
+        List<Person__c> personIdlist = [SELECT id, Name, Mobile__c, Token__c, Health_Status__c, Status_Update_Date__c
                                              FROM Person__c  WHERE id =: personId];
         if(personIdlist != null && personIdlist.size() >0){
             return personIdlist[0];
@@ -44,5 +44,17 @@ public with sharing class CTPersonController {
     
     }
     
+    //Get count of people in each health status
+    public static Map<String,Integer> getHealthStatusCount(){
 
+             Map<String,Integer> healthCountMap =  new Map<String,Integer>();
+             for (AggregateResult result : [SELECT COUNT(id) personCount, Health_Status__c
+                                                         FROM Person__c 
+                                                         GROUP BY Health_Status__c]) {
+
+                healthCountMap.put(String.valueOf(result.get('Health_Status__c')),Integer.valueOf(result.get('personCount')));
+                
+             }
+             return healthCountMap;
+    }
 }
